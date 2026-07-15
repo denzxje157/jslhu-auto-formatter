@@ -203,13 +203,16 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Cấu hình thanh bên (Sidebar)
-st.sidebar.markdown("### 🔑 Cấu hình hệ thống")
-api_key = st.sidebar.text_input(
-    "Gemini API Key",
-    value=GEMINI_API_KEY,
-    type="password",
-    help="Nhập Gemini API Key của bạn để sử dụng AI phân tích và tự động định dạng bài báo."
-)
+if GEMINI_API_KEY:
+    api_key = GEMINI_API_KEY
+else:
+    st.sidebar.markdown("### 🔑 Cấu hình hệ thống")
+    api_key = st.sidebar.text_input(
+        "Gemini API Key",
+        value="",
+        type="password",
+        help="Nhập Gemini API Key của bạn để sử dụng AI phân tích và tự động định dạng bài báo."
+    )
 
 st.sidebar.markdown("""
 ---

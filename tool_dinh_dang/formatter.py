@@ -396,6 +396,62 @@ def bold_year_in_reference(p):
             
             r_year.addnext(r_after)
 
+def set_authors_paragraph(p, authors):
+    p.text = ""
+    p.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.RIGHT
+    p.paragraph_format.space_before = Pt(6)
+    p.paragraph_format.space_after = Pt(2)
+    p.paragraph_format.line_spacing = 1.0
+    
+    for idx, a in enumerate(authors):
+        name = a.get("name", "")
+        aff = a.get("affiliation_number", "")
+        is_corr = a.get("is_corresponding", False)
+        
+        r_name = p.add_run(name)
+        r_name.font.name = 'Times New Roman'
+        r_name.font.size = Pt(12)
+        r_name.bold = True
+        
+        if aff:
+            r_aff = p.add_run(aff)
+            r_aff.font.name = 'Times New Roman'
+            r_aff.font.size = Pt(12)
+            r_aff.bold = True
+            r_aff.font.superscript = True
+            
+        if is_corr:
+            r_corr = p.add_run("*")
+            r_corr.font.name = 'Times New Roman'
+            r_corr.font.size = Pt(12)
+            r_corr.bold = True
+            r_corr.font.superscript = True
+            
+        if idx < len(authors) - 1:
+            r_sep = p.add_run(", ")
+            r_sep.font.name = 'Times New Roman'
+            r_sep.font.size = Pt(12)
+            r_sep.bold = True
+
+def set_affiliation_paragraph(p, aff_num, aff_name):
+    p.text = ""
+    p.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.RIGHT
+    p.paragraph_format.space_before = Pt(0)
+    p.paragraph_format.space_after = Pt(2)
+    p.paragraph_format.line_spacing = 1.0
+    
+    if aff_num:
+        r_num = p.add_run(aff_num)
+        r_num.font.name = 'Times New Roman'
+        r_num.font.size = Pt(10)
+        r_num.font.superscript = True
+        r_num.font.italic = True
+        
+    r_name = p.add_run(" " + aff_name)
+    r_name.font.name = 'Times New Roman'
+    r_name.font.size = Pt(10)
+    r_name.font.italic = True
+
 def format_document(data, template_path, output_path, source_docx_path=None):
     """
     Tự động hóa định dạng bài báo khoa học dựa trên biểu mẫu JSLHU.
@@ -461,39 +517,32 @@ def format_document(data, template_path, output_path, source_docx_path=None):
     p_title_vi.paragraph_format.space_before = Pt(0)
     p_title_vi.paragraph_format.space_after = Pt(6)
     
-    replace_text_preserve_formatting(p_authors_vi, authors_vi_str or "Tác giả 1, Tác giả 2", bold=True, size_pt=12, align=WD_ALIGN_PARAGRAPH.RIGHT)
-    p_authors_vi.paragraph_format.space_before = Pt(6)
-    p_authors_vi.paragraph_format.space_after = Pt(2)
-
+    if data.get("authors_vi"):
+        set_authors_paragraph(p_authors_vi, data.get("authors_vi"))
+    else:
+        replace_text_preserve_formatting(p_authors_vi, "Tác giả 1, Tác giả 2", bold=True, size_pt=12, align=WD_ALIGN_PARAGRAPH.RIGHT)
+    
     # Cập nhật Tiêu đề & Tác giả tiếng Anh
     replace_text_preserve_formatting(p_title_en, title_en or "TITLE OF THE PAPER IN ENGLISH", bold=True, size_pt=15, align=WD_ALIGN_PARAGRAPH.CENTER, color_rgb=lhu_blue)
     p_title_en.paragraph_format.space_before = Pt(12)
     p_title_en.paragraph_format.space_after = Pt(6)
     
-    replace_text_preserve_formatting(p_authors_en, authors_en_str or "Author 1, Author 2", bold=True, size_pt=12, align=WD_ALIGN_PARAGRAPH.RIGHT)
-    p_authors_en.paragraph_format.space_before = Pt(6)
-    p_authors_en.paragraph_format.space_after = Pt(2)
+    if data.get("authors_en"):
+        set_authors_paragraph(p_authors_en, data.get("authors_en"))
+    else:
+        replace_text_preserve_formatting(p_authors_en, "Author 1, Author 2", bold=True, size_pt=12, align=WD_ALIGN_PARAGRAPH.RIGHT)
 
     # Cập nhật Đơn vị công tác tiếng Anh
-    aff_en_items = []
-    for aff in data.get("affiliations_en", []):
-        aff_en_items.append(f"{aff.get('number', '')} {aff.get('name', '')}")
-    
-    if len(aff_en_items) > 0:
-        replace_text_preserve_formatting(p_aff_en_1, aff_en_items[0], size_pt=10, italic=True, align=WD_ALIGN_PARAGRAPH.RIGHT)
-        p_aff_en_1.paragraph_format.space_before = Pt(0)
-        p_aff_en_1.paragraph_format.space_after = Pt(2)
-        p_aff_en_1.paragraph_format.line_spacing = 1.0
+    affs_en = data.get("affiliations_en", [])
+    if len(affs_en) > 0:
+        set_affiliation_paragraph(p_aff_en_1, affs_en[0].get("number", ""), affs_en[0].get("name", ""))
     else:
         p_aff_en_1.text = ""
         p_aff_en_1.paragraph_format.space_before = Pt(0)
         p_aff_en_1.paragraph_format.space_after = Pt(0)
         
-    if len(aff_en_items) > 1:
-        replace_text_preserve_formatting(p_aff_en_2, aff_en_items[1], size_pt=10, italic=True, align=WD_ALIGN_PARAGRAPH.RIGHT)
-        p_aff_en_2.paragraph_format.space_before = Pt(0)
-        p_aff_en_2.paragraph_format.space_after = Pt(2)
-        p_aff_en_2.paragraph_format.line_spacing = 1.0
+    if len(affs_en) > 1:
+        set_affiliation_paragraph(p_aff_en_2, affs_en[1].get("number", ""), affs_en[1].get("name", ""))
     else:
         p_aff_en_2.text = ""
         p_aff_en_2.paragraph_format.space_before = Pt(0)
@@ -511,25 +560,60 @@ def format_document(data, template_path, output_path, source_docx_path=None):
 
     # Chèn Tác giả liên hệ tiếng Anh (*Corresponding Author) phía TRÊN bảng 1
     p_corr_en = doc.add_paragraph()
-    replace_text_preserve_formatting(p_corr_en, f"*Corresponding Author: {data.get('email_contact', 'nguyenvana@lhu.edu.vn')}", italic=True, size_pt=10, align=WD_ALIGN_PARAGRAPH.RIGHT)
+    p_corr_en.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.RIGHT
     p_corr_en.paragraph_format.space_before = Pt(0)
     p_corr_en.paragraph_format.space_after = Pt(4)
     p_corr_en.paragraph_format.line_spacing = 1.0
+    
+    r_ast_en = p_corr_en.add_run("*")
+    r_ast_en.font.name = 'Times New Roman'
+    r_ast_en.font.size = Pt(10)
+    r_ast_en.font.superscript = True
+    r_ast_en.font.italic = True
+    
+    r_text_en = p_corr_en.add_run(" Corresponding Author: " + data.get('email_contact', 'nguyenvana@lhu.edu.vn'))
+    r_text_en.font.name = 'Times New Roman'
+    r_text_en.font.size = Pt(10)
+    r_text_en.font.italic = True
     doc.tables[1]._tbl.addprevious(p_corr_en._p)
 
     # Chèn Đơn vị công tác & Tác giả liên hệ tiếng Việt phía TRÊN bảng 0
-    aff_vi_items = []
-    for aff in data.get("affiliations_vi", []):
-        aff_vi_items.append(f"{aff.get('number', '')} {aff.get('name', '')}")
-    aff_vi_str = "\n".join(aff_vi_items)
-    if data.get("email_contact"):
-        aff_vi_str += f"\n* Tác giả liên hệ: {data.get('email_contact')}"
-        
     p_aff_vi = doc.add_paragraph()
-    replace_text_preserve_formatting(p_aff_vi, aff_vi_str, italic=True, size_pt=10, align=WD_ALIGN_PARAGRAPH.RIGHT)
+    p_aff_vi.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.RIGHT
     p_aff_vi.paragraph_format.space_before = Pt(0)
     p_aff_vi.paragraph_format.space_after = Pt(4)
     p_aff_vi.paragraph_format.line_spacing = 1.0
+    
+    affs_vi = data.get("affiliations_vi", [])
+    for idx, aff in enumerate(affs_vi):
+        num = aff.get("number", "")
+        name = aff.get("name", "")
+        if num:
+            r_num = p_aff_vi.add_run(num)
+            r_num.font.name = 'Times New Roman'
+            r_num.font.size = Pt(10)
+            r_num.font.superscript = True
+            r_num.font.italic = True
+        r_name = p_aff_vi.add_run(" " + name)
+        r_name.font.name = 'Times New Roman'
+        r_name.font.size = Pt(10)
+        r_name.font.italic = True
+        if idx < len(affs_vi) - 1:
+            p_aff_vi.add_run("\n")
+            
+    if data.get("email_contact"):
+        p_aff_vi.add_run("\n")
+        r_ast_vi = p_aff_vi.add_run("*")
+        r_ast_vi.font.name = 'Times New Roman'
+        r_ast_vi.font.size = Pt(10)
+        r_ast_vi.font.superscript = True
+        r_ast_vi.font.italic = True
+        
+        r_email = p_aff_vi.add_run(" Tác giả liên hệ: " + data.get("email_contact"))
+        r_email.font.name = 'Times New Roman'
+        r_email.font.size = Pt(10)
+        r_email.font.italic = True
+        
     doc.tables[0]._tbl.addprevious(p_aff_vi._p)
 
     # Ghi mã DOI và Available online ở phía DƯỚI bảng 1 (trực tiếp tại đoạn break_p chứa section break)

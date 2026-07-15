@@ -1,0 +1,23 @@
+# Environments & API Keys
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Python caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+
+# Word Temporary Files
+~$*.docx
+~$*.doc
+
+# IDEs & System files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

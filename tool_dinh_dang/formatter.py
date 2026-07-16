@@ -318,7 +318,10 @@ def format_equation_paragraph(p, math_idx):
     tab1_run = parse_xml(f'<w:r {nsdecls("w")}><w:tab/></w:r>')
     p._element.append(tab1_run)
     
-    for math_elm in math_elms:
+    for idx, math_elm in enumerate(math_elms):
+        if idx > 0:
+            br_run = parse_xml(f'<w:r {nsdecls("w")}><w:br/><w:tab/></w:r>')
+            p._element.append(br_run)
         p._element.append(math_elm)
         
     tab2_run = parse_xml(f'<w:r {nsdecls("w")}><w:tab/><w:rPr><w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman"/><w:sz w:val="20"/></w:rPr><w:t>({math_idx})</w:t></w:r>')

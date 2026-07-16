@@ -303,10 +303,10 @@ def format_equation_paragraph(p, math_idx):
                 sz[0].set(qn('w:val'), '20')
             else:
                 sz_xml = parse_xml(f'<w:sz {nsdecls("w")} w:val="20"/>')
-                rPr[0].append(sz_xml)
+                rPr[0].insert(0, sz_xml)
         else:
-            rPr_xml = parse_xml(f'<w:rPr {nsdecls("w")}><w:sz w:val="20"/></w:rPr>')
-            mr.append(rPr_xml)
+            rPr_xml = parse_xml(f'<w:rPr {nsdecls("w")}><w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math"/><w:sz w:val="20"/></w:rPr>')
+            mr.insert(0, rPr_xml)
             
     pPr = p._element.pPr
     p._element.clear()

@@ -399,6 +399,8 @@ def bold_year_in_reference(p):
 def set_authors_paragraph(p, authors):
     p.text = ""
     p.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.RIGHT
+    p.paragraph_format.right_indent = Cm(0)
+    p.paragraph_format.left_indent = Cm(0)
     p.paragraph_format.space_before = Pt(6)
     p.paragraph_format.space_after = Pt(2)
     p.paragraph_format.line_spacing = 1.0
@@ -411,31 +413,33 @@ def set_authors_paragraph(p, authors):
         r_name = p.add_run(name)
         r_name.font.name = 'Times New Roman'
         r_name.font.size = Pt(12)
-        r_name.bold = True
+        r_name.bold = False
         
         if aff:
             r_aff = p.add_run(aff)
             r_aff.font.name = 'Times New Roman'
             r_aff.font.size = Pt(12)
-            r_aff.bold = True
+            r_aff.bold = False
             r_aff.font.superscript = True
             
         if is_corr:
             r_corr = p.add_run("*")
             r_corr.font.name = 'Times New Roman'
             r_corr.font.size = Pt(12)
-            r_corr.bold = True
+            r_corr.bold = False
             r_corr.font.superscript = True
             
         if idx < len(authors) - 1:
             r_sep = p.add_run(", ")
             r_sep.font.name = 'Times New Roman'
             r_sep.font.size = Pt(12)
-            r_sep.bold = True
+            r_sep.bold = False
 
 def set_affiliation_paragraph(p, aff_num, aff_name):
     p.text = ""
     p.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.RIGHT
+    p.paragraph_format.right_indent = Cm(0)
+    p.paragraph_format.left_indent = Cm(0)
     p.paragraph_format.space_before = Pt(0)
     p.paragraph_format.space_after = Pt(2)
     p.paragraph_format.line_spacing = 1.0
@@ -520,7 +524,9 @@ def format_document(data, template_path, output_path, source_docx_path=None):
     if data.get("authors_vi"):
         set_authors_paragraph(p_authors_vi, data.get("authors_vi"))
     else:
-        replace_text_preserve_formatting(p_authors_vi, "Tác giả 1, Tác giả 2", bold=True, size_pt=12, align=WD_ALIGN_PARAGRAPH.RIGHT)
+        replace_text_preserve_formatting(p_authors_vi, "Tác giả 1, Tác giả 2", bold=False, size_pt=12, align=WD_ALIGN_PARAGRAPH.RIGHT)
+        p_authors_vi.paragraph_format.right_indent = Cm(0)
+        p_authors_vi.paragraph_format.left_indent = Cm(0)
     
     # Cập nhật Tiêu đề & Tác giả tiếng Anh
     replace_text_preserve_formatting(p_title_en, title_en or "TITLE OF THE PAPER IN ENGLISH", bold=True, size_pt=15, align=WD_ALIGN_PARAGRAPH.CENTER, color_rgb=lhu_blue)
@@ -530,7 +536,9 @@ def format_document(data, template_path, output_path, source_docx_path=None):
     if data.get("authors_en"):
         set_authors_paragraph(p_authors_en, data.get("authors_en"))
     else:
-        replace_text_preserve_formatting(p_authors_en, "Author 1, Author 2", bold=True, size_pt=12, align=WD_ALIGN_PARAGRAPH.RIGHT)
+        replace_text_preserve_formatting(p_authors_en, "Author 1, Author 2", bold=False, size_pt=12, align=WD_ALIGN_PARAGRAPH.RIGHT)
+        p_authors_en.paragraph_format.right_indent = Cm(0)
+        p_authors_en.paragraph_format.left_indent = Cm(0)
 
     # Cập nhật Đơn vị công tác tiếng Anh
     affs_en = data.get("affiliations_en", [])
@@ -561,6 +569,8 @@ def format_document(data, template_path, output_path, source_docx_path=None):
     # Chèn Tác giả liên hệ tiếng Anh (*Corresponding Author) phía TRÊN bảng 1
     p_corr_en = doc.add_paragraph()
     p_corr_en.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.RIGHT
+    p_corr_en.paragraph_format.right_indent = Cm(0)
+    p_corr_en.paragraph_format.left_indent = Cm(0)
     p_corr_en.paragraph_format.space_before = Pt(0)
     p_corr_en.paragraph_format.space_after = Pt(4)
     p_corr_en.paragraph_format.line_spacing = 1.0
@@ -580,6 +590,8 @@ def format_document(data, template_path, output_path, source_docx_path=None):
     # Chèn Đơn vị công tác & Tác giả liên hệ tiếng Việt phía TRÊN bảng 0
     p_aff_vi = doc.add_paragraph()
     p_aff_vi.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.RIGHT
+    p_aff_vi.paragraph_format.right_indent = Cm(0)
+    p_aff_vi.paragraph_format.left_indent = Cm(0)
     p_aff_vi.paragraph_format.space_before = Pt(0)
     p_aff_vi.paragraph_format.space_after = Pt(4)
     p_aff_vi.paragraph_format.line_spacing = 1.0

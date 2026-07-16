@@ -10,36 +10,38 @@ data = {
     "title_vi": "NGHIÊN CỨU KIẾN TRÚC RAG THÍCH ỨNG TRONG TỐI ƯU HÓA PHƯƠNG PHÁP DẠY HỌC CÁ NHÂN HÓA K-12",
     "title_en": "RESEARCH ON ADAPTIVE RAG ARCHITECTURE FOR OPTIMIZING PERSONALIZED K-12 TEACHING METHODOLOGY",
     
-    # Danh sách tác giả tiếng Việt (Bùi Xuân Cảnh và Nguyễn Hoàng Anh mang số mũ 1, Cảnh là tác giả liên hệ)
+    # Danh sách tác giả tiếng Việt (Bùi Xuân Cảnh, Nguyễn Hoàng Anh và Trần Hoài Phương mang số mũ 1, Cảnh là tác giả liên hệ)
     "authors_vi": [
         {"name": "Bùi Xuân Cảnh", "affiliation_number": "1", "is_corresponding": True},
-        {"name": "Nguyễn Hoàng Anh", "affiliation_number": "1", "is_corresponding": False}
+        {"name": "Nguyễn Hoàng Anh", "affiliation_number": "1", "is_corresponding": False},
+        {"name": "Trần Hoài Phương", "affiliation_number": "1", "is_corresponding": False}
     ],
     
     # Danh sách tác giả tiếng Anh tương ứng
     "authors_en": [
         {"name": "Bui Xuan Canh", "affiliation_number": "1", "is_corresponding": True},
-        {"name": "Nguyen Hoang Anh", "affiliation_number": "1", "is_corresponding": False}
+        {"name": "Nguyen Hoang Anh", "affiliation_number": "1", "is_corresponding": False},
+        {"name": "Tran Hoai Phuong", "affiliation_number": "1", "is_corresponding": False}
     ],
     
     # Danh sách đơn vị công tác tiếng Việt
     "affiliations_vi": [
-        {"number": "1", "name": "Trường Đại học Lạc Hồng, Số 10 đường Huỳnh Văn Nghệ, phường Bửu Long, thành phố Biên Hòa, tỉnh Đồng Nai, Việt Nam"}
+        {"number": "1", "name": "Trường Đại học Lạc Hồng, Số 10, Huỳnh Văn Nghệ, phường Trấn Biên, thành phố Đồng Nai, Việt Nam"}
     ],
     
     # Danh sách đơn vị công tác tiếng Anh
     "affiliations_en": [
-        {"number": "1", "name": "Lac Hong University, No. 10, Huynh Van Nghe Street, Buu Long Ward, Bien Hoa City, Dong Nai Province, Vietnam"}
+        {"number": "1", "name": "Lac Hong University, No. 10, Huynh Van Nghe Street, Tran Bien Ward, Dong Nai City, Vietnam"}
     ],
     
     # Email liên hệ của tác giả chính
     "email_contact": "Canhbx@lhu.edu.vn",
     
     # Tóm tắt tiếng Việt (Nhập trực tiếp nội dung, không ghi chữ "TÓM TẮT")
-    "abstract_vi": "Bài báo này nghiên cứu giải quyết sự bất bình đẳng tiếp cận học liệu số ở học sinh phổ thông (K-12) bằng cách đề xuất kiến trúc RAG thích ứng phân cấp. Để khắc phục lỗi nhận diện thuật ngữ và ảo giác kiến thức, chúng tôi tích hợp cơ chế tìm kiếm kết hợp BM25 và Cosine, tối ưu hóa bằng thuật toán xếp hạng hỗn hợp RRF và tái xếp hạng Cross-Encoder BGE-Reranker-Large. Hệ thống sử dụng cơ sở dữ liệu Supabase PGVector và cấu hình prompt Socratic để định hướng tư duy học sinh theo vùng phát triển gần nhất. Kết quả thực nghiệm đối chứng trên 60 học sinh cho thấy hệ thống tăng 151,1% thời gian tự học hiệu quả, giảm tỷ lệ sao chép lời giải xuống 10,5%. Đánh giá định lượng Ragas khẳng định hệ thống đạt độ trung thực 94% và độ phù hợp 91%. Nghiên cứu chứng minh tính khả thi của trợ lý AI học thuật trong giáo dục phổ thông cá nhân hóa.",
+    "abstract_vi": "Bài báo này nghiên cứu giải quyết bất bình đẳng tiếp cận học liệu số ở học sinh phổ thông từ lớp một đến lớp mười hai bằng cách đề xuất kiến trúc truy xuất tăng cường tạo sinh thích ứng phân cấp để tối ưu hóa dạy học cá nhân hóa. Phương pháp nghiên cứu bao gồm thiết kế bộ định tuyến câu hỏi để phân lớp người học, kết hợp tìm kiếm lai giữa tần suất từ khóa và độ tương đồng ngữ nghĩa, tái xếp hạng bằng mô hình học sâu và điều hướng phản hồi theo phương pháp gợi mở từng bước kết hợp hồ sơ năng lực động của học sinh theo vùng phát triển gần nhất. Kết quả thực nghiệm đối chứng trên sáu mươi học sinh giúp tăng một trăm năm mươi mốt phẩy một phần trăm thời gian tự học tập trung, đồng thời giảm tỷ lệ sao chép lời giải xuống mười phẩy năm phần trăm. Đánh giá định lượng qua bộ chỉ số tiêu chuẩn khẳng định hệ thống đạt độ trung thực chín mươi tư phần trăm và độ phù hợp chín mươi mốt phần trăm. Chỉ số đồng thuận của mười giáo viên đánh giá đạt không phẩy bảy mươi sáu. Nghiên cứu này chứng minh tính khả thi của trợ lý học thuật trí tuệ nhân tạo trong việc nâng cao năng lực tự học cá nhân hóa của học sinh.",
     
     # Tóm tắt tiếng Anh (Nhập trực tiếp nội dung, không ghi chữ "ABSTRACT")
-    "abstract_en": "This paper addresses the educational inequality in K-12 learning by proposing a hierarchical adaptive RAG architecture. To resolve equation parsing errors and knowledge hallucination, we integrate a hybrid search mechanism combining BM25 and Cosine similarity, optimized by Reciprocal Rank Fusion (RRF) and Cross-Encoder BGE-Reranker-Large. The system utilizes a Supabase PGVector database and a Socratic prompting hierarchy to guide student reasoning within the Zone of Proximal Development. Experimental results on 60 students demonstrate a 151.1% increase in self-study time and a reduction in solution-copying habits to 10.5%. Quantitative evaluation using Ragas confirms that the system achieves 94% faithfulness and 91% answer relevance. This research demonstrates the feasibility of academic AI tutors in personalized K-12 education.",
+    "abstract_en": "This paper investigates addressing inequality in access to digital learning materials for school students from grade one to grade twelve by proposing a hierarchical adaptive retrieval-augmented generation architecture to optimize personalized learning. The research methodology includes designing a query router to classify learners, combining hybrid search between term frequency and semantic similarity, reranking using a deep learning model, and guiding feedback through a step-by-step scaffolding method combined with students' dynamic competency profiles according to the zone of proximal development. Experimental results on sixty students show an increase of one hundred fifty-one point one percent in focused self-study time, while reducing solution copying to ten point five percent. Quantitative evaluation confirms that the system achieves ninety-four percent faithfulness and ninety-one percent answer relevance. The consensus index of ten evaluating teachers reaches zero point seventy-six. This study demonstrates the feasibility of artificial intelligence academic assistants in enhancing students' personalized self-study capabilities.",
     
     # Từ khóa tiếng Việt (Dạng mảng các từ khóa)
     "keywords_vi": ["RAG thích ứng", "Gia sư ảo K-12", "Supabase", "PGVector", "Lọc Metadata", "Sư phạm gợi mở"],

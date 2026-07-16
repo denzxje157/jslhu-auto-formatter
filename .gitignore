@@ -21,3 +21,10 @@ __pycache__/
 .idea/
 .DS_Store
 Thumbs.db
+
+# Ignore all docx files except templates & regulations
+*.docx
+!BM01*.docx
+!"Quy định đánh giá sơ loại bài báo.docx"
+!tool_dinh_dang/*.docx
+

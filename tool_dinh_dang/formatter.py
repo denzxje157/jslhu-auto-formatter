@@ -290,8 +290,7 @@ def format_equation_paragraph(p, math_idx):
     p_fmt.tab_stops.add_tab_stop(Cm(4.25), docx.enum.text.WD_TAB_ALIGNMENT.CENTER)
     p_fmt.tab_stops.add_tab_stop(Cm(8.5), docx.enum.text.WD_TAB_ALIGNMENT.RIGHT)
     
-    math_elms = p._element.xpath('.//*[local-name()="oMath"]')
-    if not math_elms:
+    if not p._element.xpath('.//*[local-name()="oMath"]'):
         return
         
     # Ép cỡ chữ của tất cả các run công thức m:r về 10pt (w:sz val="20")
@@ -308,6 +307,9 @@ def format_equation_paragraph(p, math_idx):
             rPr_xml = parse_xml(f'<w:rPr {nsdecls("w")}><w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math"/><w:sz w:val="20"/></w:rPr>')
             mr.insert(0, rPr_xml)
             
+    # Thực hiện deepcopy sau khi các phần tử đã được định dạng 10pt thành công
+    math_elms = [copy.deepcopy(x) for x in p._element.xpath('.//*[local-name()="oMath"]')]
+    
     pPr = p._element.pPr
     p._element.clear()
     if pPr is not None:

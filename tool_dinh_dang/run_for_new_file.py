@@ -44,10 +44,10 @@ data = {
     "abstract_en": "This paper investigates addressing inequality in access to digital learning materials for school students from grade one to grade twelve by proposing a hierarchical adaptive retrieval-augmented generation architecture to optimize personalized learning. The research methodology includes designing a query router to classify learners, combining hybrid search between term frequency and semantic similarity, reranking using a deep learning model, and guiding feedback through a step-by-step scaffolding method combined with students' dynamic competency profiles according to the zone of proximal development. Experimental results on sixty students show an increase of one hundred fifty-one point one percent in focused self-study time, while reducing solution copying to ten point five percent. Quantitative evaluation confirms that the system achieves ninety-four percent faithfulness and ninety-one percent answer relevance. The consensus index of ten evaluating teachers reaches zero point seventy-six. This study demonstrates the feasibility of artificial intelligence academic assistants in enhancing students' personalized self-study capabilities.",
     
     # Từ khóa tiếng Việt (Dạng mảng các từ khóa)
-    "keywords_vi": ["RAG thích ứng", "Gia sư ảo K-12", "Supabase", "PGVector", "Lọc Metadata", "Sư phạm gợi mở"],
+    "keywords_vi": ["RAG thích ứng", "Gia sư ảo K-12", "PGVector", "Lọc Metadata", "Sư phạm gợi mở"],
     
     # Từ khóa tiếng Anh tương ứng
-    "keywords_en": ["Adaptive RAG", "K-12 Virtual Tutor", "Supabase", "PGVector", "Metadata Filtering", "Scaffolding Pedagogy"]
+    "keywords_en": ["Adaptive RAG", "K-12 Virtual Tutor", "PGVector", "Metadata Filtering", "Scaffolding Pedagogy"]
 }
 
 # =====================================================================

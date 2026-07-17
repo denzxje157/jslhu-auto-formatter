@@ -71,29 +71,49 @@ def style_metadata_table(table):
                 p.paragraph_format.space_after = Pt(0)
                 p.paragraph_format.line_spacing = 1.0
 
-    # 2. Tạo đường kẻ ngang phân cách tiêu đề cột (Row 0)
+    # 2. Tạo đường kẻ ngang phân cách tiêu đề cột (Row 0 - dưới THÔNG TIN BÀI BÁO / ARTICLE INFO)
     if len(table.rows) > 0:
-        for cell in table.rows[0].cells:
+        for cell in table.rows[0].cells[:2]:
             tcPr = cell._tc.get_or_add_tcPr()
             tcBorders = parse_xml(
                 f'<w:tcBorders {nsdecls("w")}>'
-                f'  <w:bottom w:val="single" w:sz="8" w:space="0" w:color="000000"/>'
+                f'  <w:bottom w:val="single" w:sz="4" w:space="0" w:color="000000"/>'
                 f'</w:tcBorders>'
             )
             tcPr.append(tcBorders)
             
-    # 3. Tạo đường kẻ ngang trên hàng TỪ KHÓA / KEYWORDS (Row 5 sau khi đã xóa hàng 0)
+    # 3. Tạo đường kẻ ngang trên hàng TỪ KHÓA / KEYWORDS (Row 5)
     if len(table.rows) > 5:
-        for cell in table.rows[5].cells:
+        for cell in table.rows[5].cells[:2]:
             tcPr = cell._tc.get_or_add_tcPr()
             tcBorders = parse_xml(
                 f'<w:tcBorders {nsdecls("w")}>'
-                f'  <w:top w:val="single" w:sz="8" w:space="0" w:color="000000"/>'
+                f'  <w:top w:val="single" w:sz="4" w:space="0" w:color="000000"/>'
                 f'</w:tcBorders>'
             )
             tcPr.append(tcBorders)
 
-    # 4. Đặt độ rộng cột cố định để tránh ngắt dòng ngày tháng tiếng Anh (Tổng 7.0 inches)
+    # 4. Tạo đường kẻ ngang trên & dưới hàng nội dung Từ khóa (Row 6) chuẩn 0.5pt (sz="4")
+    if len(table.rows) > 6:
+        for c_idx, cell in enumerate(table.rows[6].cells):
+            tcPr = cell._tc.get_or_add_tcPr()
+            if c_idx < 2:
+                tcBorders = parse_xml(
+                    f'<w:tcBorders {nsdecls("w")}>'
+                    f'  <w:top w:val="single" w:sz="4" w:space="0" w:color="000000"/>'
+                    f'  <w:bottom w:val="single" w:sz="4" w:space="0" w:color="000000"/>'
+                    f'</w:tcBorders>'
+                )
+            else:
+                tcBorders = parse_xml(
+                    f'<w:tcBorders {nsdecls("w")}>'
+                    f'  <w:top w:val="nil"/>'
+                    f'  <w:bottom w:val="single" w:sz="4" w:space="0" w:color="000000"/>'
+                    f'</w:tcBorders>'
+                )
+            tcPr.append(tcBorders)
+
+    # 5. Đặt độ rộng cột cố định để tránh ngắt dòng ngày tháng tiếng Anh (Tổng 7.0 inches)
     col_widths = [Inches(1.2), Inches(1.2), Inches(4.6)]
     for row in table.rows:
         if len(row.cells) == 3:
@@ -284,8 +304,7 @@ def format_equation_paragraph(p, math_idx):
     p_fmt.space_after = Pt(3)
     p_fmt.alignment = None
     
-    for ts in list(p_fmt.tab_stops):
-        p_fmt.tab_stops.add_tab_stop(ts.position, docx.enum.text.WD_TAB_ALIGNMENT.LEFT).clear()
+    p_fmt.tab_stops.clear_all()
         
     p_fmt.tab_stops.add_tab_stop(Cm(4.25), docx.enum.text.WD_TAB_ALIGNMENT.CENTER)
     p_fmt.tab_stops.add_tab_stop(Cm(8.5), docx.enum.text.WD_TAB_ALIGNMENT.RIGHT)
@@ -859,7 +878,10 @@ def format_document(data, template_path, output_path, source_docx_path=None):
                         run.font.color.rgb = lhu_blue
                     elif ref_started:
                         run.font.size = Pt(9)
-                        run.bold = False  # BẮT BUỘC KHÔNG IN ĐẬM danh sách tài liệu tham khảo
+                        if re.match(r'^\d{4}$', run.text.strip()):
+                            run.bold = True
+                        else:
+                            run.bold = False
                     else:
                         run.font.size = Pt(10)
                         # Giữ nguyên định dạng in đậm/in thường gốc của từng từ trong thân bài

@@ -1,14 +1,10 @@
-# Byte-compiled / optimized / DLL files
-__pycache__/
-*.py[cod]
-*$py.class
-
-# Ignore all user article docx files for privacy & copyright protection
+# Ignore all user article docx and pdf files for privacy
 *.docx
+*.pdf
 !BM01. jslhu template.docx
 !Quy định đánh giá sơ loại bài báo.docx
 
-# Temporary & backup files
+# Ignore archive/trash files
 archive_trash/
 ~$*.docx
 *.tmp
@@ -16,5 +12,7 @@ archive_trash/
 .idea/
 .vscode/
 
-# Streamlit local config
-.streamlit/
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class

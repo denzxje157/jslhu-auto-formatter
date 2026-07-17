@@ -64,11 +64,11 @@ st.markdown("""
         display: inline-block;
     }
 </style>
-""", unsafe_allow_text=True)
+""", unsafe_allow_html=True)
 
 # Header
-st.markdown('<div class="main-header">🎓 JSLHU AUTOMATED FORMATTER</div>', unsafe_allow_text=True)
-st.markdown('<div class="sub-header">Hệ thống tự động định dạng bài báo khoa học chuẩn Tạp chí Khoa học Lạc Hồng (JSLHU)</div>', unsafe_allow_text=True)
+st.markdown('<div class="main-header">🎓 JSLHU AUTOMATED FORMATTER</div>', unsafe_allow_html=True)
+st.markdown('<div class="sub-header">Hệ thống tự động định dạng bài báo khoa học chuẩn Tạp chí Khoa học Lạc Hồng (JSLHU)</div>', unsafe_allow_html=True)
 
 # Sidebar hướng dẫn
 with st.sidebar:
@@ -90,12 +90,12 @@ with st.sidebar:
 col1, col2 = st.columns([1, 1], gap="large")
 
 with col1:
-    st.markdown('<div class="card-box">', unsafe_allow_text=True)
+    st.markdown('<div class="card-box">', unsafe_allow_html=True)
     st.subheader("📤 1. Tải tệp bản thảo (.docx)")
     uploaded_file = st.file_uploader("Kéo thả hoặc chọn tệp Word bài báo của bạn vào đây:", type=["docx"])
-    st.markdown('</div>', unsafe_allow_text=True)
+    st.markdown('</div>', unsafe_allow_html=True)
 
-    st.markdown('<div class="card-box">', unsafe_allow_text=True)
+    st.markdown('<div class="card-box">', unsafe_allow_html=True)
     st.subheader("⚙️ 2. Chọn Tùy chọn / Công cụ Định dạng")
     
     tool_option = st.radio(
@@ -107,12 +107,12 @@ with col1:
         ],
         index=0
     )
-    st.markdown('</div>', unsafe_allow_text=True)
+    st.markdown('</div>', unsafe_allow_html=True)
     
     process_btn = st.button("🚀 TIẾN HÀNH ĐỊNH DẠNG TỰ ĐỘNG", use_container_width=True)
 
 with col2:
-    st.markdown('<div class="card-box">', unsafe_allow_text=True)
+    st.markdown('<div class="card-box">', unsafe_allow_html=True)
     st.subheader("📥 3. Kết quả & Tải tệp về máy")
     
     if process_btn:

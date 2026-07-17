@@ -9,7 +9,7 @@ import sys
 def run_tool_bm01(input_file, output_file="output_chuan_bm01_jslhu.docx"):
     """
     TOOL 2: Định dạng Chuẩn Bài Báo Mẫu BM01 - Tạp chí Lạc Hồng JSLHU 
-    (Trang bìa Metadata 2 cột có khung viền 0.5pt, Thân bài 2 Cột 1cm gutter, A4, Lề 2.5cm, 10pt)
+    (Trang bìa Metadata 2 cột có khung viền 0.5pt, Thân bài 2 Cột 1cm gutter, A4, Lề 2.5cm, Font 10pt)
     """
     sys.stdout.reconfigure(encoding='utf-8')
     print(f"\n================ [TOOL 2] BẮT ĐẦU ĐỊNH DẠNG CHUẨN BM01 - JSLHU ================")
@@ -73,8 +73,49 @@ def run_tool_bm01(input_file, output_file="output_chuan_bm01_jslhu.docx"):
                 else:
                     tcPr.append(parse_xml(f'<w:tcBorders {nsdecls("w")}><w:top w:val="nil"/><w:bottom w:val="single" w:sz="4" w:space="0" w:color="000000"/></w:tcBorders>'))
 
+    # 3. Định dạng thu nhỏ các Bảng nội dung (từ Bảng 2 trở đi)
+    for t_idx, t in enumerate(doc.tables):
+        if t_idx >= 2:
+            t.alignment = docx.enum.table.WD_TABLE_ALIGNMENT.CENTER
+            t.allow_autofit = True
+            
+            tblPr = t._tbl.tblPr
+            tblBorders = tblPr.find(qn('w:tblBorders'))
+            if tblBorders is not None:
+                tblPr.remove(tblBorders)
+                
+            borders = parse_xml(
+                f'<w:tblBorders {nsdecls("w")}>'
+                f'  <w:top w:val="single" w:sz="8" w:space="0" w:color="000000"/>'
+                f'  <w:bottom w:val="single" w:sz="8" w:space="0" w:color="000000"/>'
+                f'  <w:left w:val="none"/>'
+                f'  <w:right w:val="none"/>'
+                f'  <w:insideH w:val="none"/>'
+                f'  <w:insideV w:val="none"/>'
+                f'</w:tblBorders>'
+            )
+            tblPr.append(borders)
+            
+            if len(t.rows) > 0:
+                for cell in t.rows[0].cells:
+                    tcPr = cell._tc.get_or_add_tcPr()
+                    tcBorders = tcPr.find(qn('w:tcBorders'))
+                    if tcBorders is not None:
+                        tcPr.remove(tcBorders)
+                    tcPr.append(parse_xml(f'<w:tcBorders {nsdecls("w")}><w:bottom w:val="single" w:sz="4" w:space="0" w:color="000000"/></w:tcBorders>'))
+
+            for row in t.rows:
+                for cell in row.cells:
+                    for p in cell.paragraphs:
+                        p.paragraph_format.space_before = Pt(2)
+                        p.paragraph_format.space_after = Pt(2)
+                        p.paragraph_format.line_spacing = 1.0
+                        for r in p.runs:
+                            r.font.name = 'Times New Roman'
+                            r.font.size = Pt(9.5)
+
     doc.save(output_file)
-    print(f"-> Đã xuất file chuẩn BM01 thành công: '{output_file}'!")
+    print(f"-> TOOL 2 hoàn thành xuất file chuẩn BM01: '{output_file}'!")
     return True
 
 if __name__ == "__main__":

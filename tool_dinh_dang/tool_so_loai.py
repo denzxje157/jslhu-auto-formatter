@@ -5,12 +5,14 @@ from docx.oxml import parse_xml
 from docx.oxml.ns import nsdecls, qn
 import re
 import copy
+import io
 import os
 import sys
 
 def run_tool_so_loai(input_file, output_file="output_ban_nop_so_loai.docx"):
     """
-    TOOL 1: Định dạng Vòng Sơ Loại Online Portal (1 Cột A4, Lề Top 3cm, Bottom 2cm, Left 3cm, Right 2cm, 11pt, after 3pt)
+    TOOL 1: Định dạng Vòng Sơ Loại Online Portal (1 Cột A4, Top 3cm, Bottom 2cm, Left 3cm, Right 2cm, Font 11pt, after 3pt)
+    Nhận diện thông minh Bảng biểu & Hình ảnh để căn chỉnh bố cục hoàn hảo.
     """
     sys.stdout.reconfigure(encoding='utf-8')
     print(f"\n================ [TOOL 1] BẮT ĐẦU ĐỊNH DẠNG VÒNG SƠ LOẠI ================")
@@ -39,12 +41,57 @@ def run_tool_so_loai(input_file, output_file="output_ban_nop_so_loai.docx"):
         sectPr.remove(cols[0])
     sectPr.append(parse_xml(f'<w:cols {nsdecls("w")} w:num="1" w:space="0"/>'))
 
-    # Copy toàn bộ văn bản từ src_doc sang out_doc
+    # 2. Trích xuất tất cả Hình ảnh từ src_doc để chèn lại sắc nét
+    images_bytes = []
+    for item in src_doc.element.body:
+        drawings = item.xpath('.//w:drawing')
+        if drawings:
+            for dr in drawings:
+                embed_ids = dr.xpath('.//a:blip/@r:embed')
+                if embed_ids:
+                    rId = embed_ids[0]
+                    try:
+                        image_part = src_doc.part.related_parts[rId]
+                        images_bytes.append(image_part.blob)
+                    except Exception:
+                        pass
+                        
+    # 3. Duyệt văn bản & Nhận diện tự động Bảng / Hình ảnh / Paragraph
+    img_idx = 0
+    
     for p_src in src_doc.paragraphs:
         text = p_src.text
+        
+        # Xóa đoạn trống cũ
         if not text.strip() and not p_src._element.xpath('.//*[local-name()="oMath"]') and not p_src._element.xpath('.//w:drawing'):
             continue
             
+        # Nhận diện tiêu đề Hình ảnh (Hình 1:, Hình 2:, Figure 1: ...)
+        if (text.strip().startswith("Hình ") or text.strip().startswith("Figure ") or text.strip().startswith("Hinh ")) and ":" in text:
+            if img_idx < len(images_bytes):
+                img_p = out_doc.add_paragraph()
+                img_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                img_p.paragraph_format.space_before = Pt(6)
+                img_p.paragraph_format.space_after = Pt(3)
+                img_p.paragraph_format.first_line_indent = Cm(0)
+                
+                run_img = img_p.add_run()
+                run_img.add_picture(io.BytesIO(images_bytes[img_idx]), width=Inches(5.8)) # Rộng 5.8 inches chuẩn A4
+                img_idx += 1
+                
+            # Chú thích hình
+            p_cap = out_doc.add_paragraph()
+            p_cap.alignment = WD_ALIGN_PARAGRAPH.CENTER
+            p_cap.paragraph_format.space_before = Pt(3)
+            p_cap.paragraph_format.space_after = Pt(6)
+            p_cap.paragraph_format.first_line_indent = Cm(0)
+            r_cap = p_cap.add_run(text.strip())
+            r_cap.font.name = 'Times New Roman'
+            r_cap.font.size = Pt(10)
+            r_cap.italic = True
+            r_cap.bold = True
+            continue
+
         p_new = out_doc.add_paragraph()
         p_fmt = p_new.paragraph_format
         
@@ -62,10 +109,10 @@ def run_tool_so_loai(input_file, output_file="output_ban_nop_so_loai.docx"):
             run.bold = True
         else:
             p_fmt.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
-            p_fmt.first_line_indent = Cm(0.5) # Thụt đầu dòng 0.5cm
+            p_fmt.first_line_indent = Cm(0.5)
             p_fmt.space_before = Pt(0)
-            p_fmt.space_after = Pt(3) # after 3pt
-            p_fmt.line_spacing = 1.0 # Single
+            p_fmt.space_after = Pt(3)
+            p_fmt.line_spacing = 1.0
             
             for r_src in p_src.runs:
                 if not r_src.text:
@@ -76,12 +123,11 @@ def run_tool_so_loai(input_file, output_file="output_ban_nop_so_loai.docx"):
                 run.bold = r_src.bold
                 run.italic = r_src.italic
 
-    # Copy & định dạng thu nhỏ các Bảng nội dung
+    # 4. Sao chép & Nhận diện BẢNG BIỂU (Tables) -> Định dạng thu nhỏ ở giữa trang 3 đường kẻ
     for t_src in src_doc.tables:
         t_xml = copy.deepcopy(t_src._tbl)
         out_doc._element.body.append(t_xml)
         
-    # Áp dụng định dạng thu nhỏ ở giữa trang cho tất cả bảng
     for t in out_doc.tables:
         t.alignment = docx.enum.table.WD_TABLE_ALIGNMENT.CENTER
         t.allow_autofit = True
@@ -92,6 +138,7 @@ def run_tool_so_loai(input_file, output_file="output_ban_nop_so_loai.docx"):
             tblPr.remove(tblW)
         tblPr.append(parse_xml(f'<w:tblW {nsdecls("w")} w:w="0" w:type="auto"/>'))
         
+        # Viền 3 đường kẻ chuẩn IEEE
         tblBorders = tblPr.find(qn('w:tblBorders'))
         if tblBorders is not None:
             tblPr.remove(tblBorders)
@@ -115,8 +162,32 @@ def run_tool_so_loai(input_file, output_file="output_ban_nop_so_loai.docx"):
                     tcPr.remove(tcBorders)
                 tcPr.append(parse_xml(f'<w:tcBorders {nsdecls("w")}><w:bottom w:val="single" w:sz="4" w:space="0" w:color="000000"/></w:tcBorders>'))
 
+        num_cols = len(t.columns)
+        if num_cols == 5:
+            col_widths = [Cm(0.8), Cm(4.8), Cm(2.5), Cm(2.5), Cm(2.4)]
+        elif num_cols == 4:
+            col_widths = [Cm(5.0), Cm(2.5), Cm(2.5), Cm(2.0)]
+        elif num_cols == 3:
+            col_widths = [Cm(1.0), Cm(7.0), Cm(3.0)]
+        else:
+            col_widths = [Cm(2.5)] * num_cols
+
         for row in t.rows:
-            for cell in row.cells:
+            for c_idx, cell in enumerate(row.cells):
+                if c_idx < len(col_widths):
+                    cell.width = col_widths[c_idx]
+                tcPr = cell._tc.get_or_add_tcPr()
+                tcMar = tcPr.find(qn('w:tcMar'))
+                if tcMar is not None:
+                    tcPr.remove(tcMar)
+                tcPr.append(parse_xml(
+                    f'<w:tcMar {nsdecls("w")}>'
+                    f'  <w:top w:w="40" w:type="dxa"/>'
+                    f'  <w:bottom w:w="40" w:type="dxa"/>'
+                    f'  <w:left w:w="60" w:type="dxa"/>'
+                    f'  <w:right w:w="60" w:type="dxa"/>'
+                    f'</w:tcMar>'
+                ))
                 for p in cell.paragraphs:
                     p.paragraph_format.space_before = Pt(2)
                     p.paragraph_format.space_after = Pt(2)
@@ -126,7 +197,7 @@ def run_tool_so_loai(input_file, output_file="output_ban_nop_so_loai.docx"):
                         r.font.size = Pt(9.5)
 
     out_doc.save(output_file)
-    print(f"-> Đã xuất file thành công: '{output_file}'!")
+    print(f"-> TOOL 1 hoàn thành xuất file: '{output_file}'!")
     return True
 
 if __name__ == "__main__":
